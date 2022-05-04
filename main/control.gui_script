@@ -1,0 +1,56 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("set_score") then
+		local node = gui.get_node("score")
+		gui.set_text(node, "Score:"..message[1])
+	elseif message_id == hash("show_restart_button") then
+		local pos = vmath.vector3(320, 480, 1)
+		local node = gui.get_node("restart")
+		gui.set_position(node, pos)
+	elseif message_id == hash("hide_restart_button") then
+		local pos = vmath.vector3(7000, 7000, 1)
+		local node = gui.get_node("restart")
+		gui.set_position(node, pos)
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("touch") and action.pressed then
+		local nodes = {
+			up = gui.get_node("up_button"),
+			down = gui.get_node("down_button"),
+			right = gui.get_node("right_button"),
+			left = gui.get_node("left_button"),
+			restart = gui.get_node("restart"),
+		}
+
+		for key, val in pairs(nodes) do
+			if gui.pick_node(val, action.x, action.y) then
+				gui.set_alpha(val, 0.3)
+				msg.post("default:/snake", "set_direction", {key})
+				timer.delay(0.2, false, function () gui.set_alpha(val, 1) end)
+			end
+		end
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end
